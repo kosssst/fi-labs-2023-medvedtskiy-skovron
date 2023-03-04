@@ -1,3 +1,7 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
 public class Tools {
 
     private final char[] alphabet = null;
@@ -7,15 +11,30 @@ public class Tools {
     }
 
     public void run() {
-
+        System.out.println(calLetter())
     }
 
     private void filter(){
 
     }
 
-    private long calLetter(){
-        throw new UnsupportedOperationException();
+    private Map calLetter(){
+        // throw new UnsupportedOperationException();
+        Map<char, Integer> letters = new HashMap<>();
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter text: ");
+        String input = scanner.nextLine();
+        for (int i = 0; i < input.length(); i++){
+            char c = input.charAt(i);
+            if (!letters.containsKey(c)){
+                letters.put(c, 0);
+            }else{
+                int n = letters.get(c);
+                letters.put(c, (n+1))
+            }
+        }
+        scanner.close();
+        return letters;
     }
 
     private long calBiGram(){
