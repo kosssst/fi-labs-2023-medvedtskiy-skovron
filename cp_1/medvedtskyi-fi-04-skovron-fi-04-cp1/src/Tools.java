@@ -11,7 +11,7 @@ public class Tools {
     }
 
     public void run() {
-        System.out.println(calLetter())
+        System.out.println(calLetter());
     }
 
     private void filter(){
@@ -20,17 +20,17 @@ public class Tools {
 
     private Map calLetter(){
         // throw new UnsupportedOperationException();
-        Map<char, Integer> letters = new HashMap<>();
+        Map<Character, Integer> letters = new HashMap<>();
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter text: ");
         String input = scanner.nextLine();
         for (int i = 0; i < input.length(); i++){
             char c = input.charAt(i);
             if (!letters.containsKey(c)){
-                letters.put(c, 0);
+                letters.put(c,1);
             }else{
                 int n = letters.get(c);
-                letters.put(c, (n+1))
+                letters.put(c, (n+1));
             }
         }
         scanner.close();
