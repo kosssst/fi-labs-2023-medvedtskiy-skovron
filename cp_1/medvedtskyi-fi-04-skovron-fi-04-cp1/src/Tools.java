@@ -1,38 +1,64 @@
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 // Война и мир
 
-// calBigram 2 methods
-// H1, H2
-
 public class Tools {
+    private final static String FILE_PATH = "cp_1/medvedtskyi-fi-04-skovron-fi-04-cp1/src/Война и мир all in.txt";
+
+    Map<Character, Integer> mapMonoGram = calGram(filter());
+    Map<Character, Integer> mapWithSpacesMonoGram = calGram(filterWithSpaces());
+
+    Map<String, Integer> mapBiGram = calBiGram(filter());
+    Map<String, Integer> mapBiGramCross = calBiGramCross(filter());
+
+    Map<Character, Double> mapFrequencyMonoGram = calGramFrequency(mapMonoGram);
+    Map<Character, Double> mapFrequencyWithSpacesMonoGram = calGramFrequency(mapWithSpacesMonoGram);
+
+    // bi Frequency
+
     Tools() throws IOException {
 
     }
 
     public void run() throws IOException {
-        Map<Character, Integer> map = calLetter(filter("cp_1/medvedtskyi-fi-04-skovron-fi-04-cp1/src/Война и мир all in.txt"));
-        Map<Character, Integer> mapWithSpaces = calLetter(filterWithSpaces("cp_1/medvedtskyi-fi-04-skovron-fi-04-cp1/src/Война и мир all in.txt"));
-        Map<Character, Double> mapFrequency = calLetterFrequency(map);
-        Map<Character, Double> mapFrequencyWithSpaces = calLetterFrequency(mapWithSpaces);
-
         System.out.println("\nWithout spaces:");
-        map.forEach((key, value) -> System.out.println(key + ":" + value));
+        //mapMonoGram.forEach((key, value) -> System.out.println(key + ":" + value));
 
         System.out.println("\nWith spaces:");
-        mapWithSpaces.forEach((key, value) -> System.out.println(key + ":" + value));
+        //mapWithSpacesMonoGram.forEach((key, value) -> System.out.println(key + ":" + value));
 
         System.out.println("\nFrequency without spaces:");
-        mapFrequency.forEach((key, value) -> System.out.println(key + ":" + (value*100.0) + "%"));
+        //mapFrequency.forEach((key, value) -> System.out.println(key + ":" + (value*100.0) + "%"));
 
         System.out.println("\nFrequency with spaces:");
-        mapFrequencyWithSpaces.forEach((key, value) -> System.out.println(key + ":" + (value*100.0) + "%"));
+        //mapFrequencyWithSpaces.forEach((key, value) -> System.out.println(key + ":" + (value*100.0) + "%"));
+
+        System.out.println("\nShow biGram no crossing");
+        //mapBiGram.forEach((key, value) -> System.out.println(key + ":" + value));
+
+        System.out.println("\nShow biGram crossing");
+        //mapBiGramCross.forEach((key, value) -> System.out.println(key + ":" + value));
+
+        System.out.println("\n Entropy MonoGram with space");
+        //System.out.println(entropyMonoGramSpace());
+
+        System.out.println("\n Entropy MonoGram without space");
+        //System.out.println(entropyMonoGramNoSpace());
+
+        System.out.println("\n Entropy BiGram with space");
+        System.out.println(entropyBiGramSpace());
+
+        System.out.println("\n Entropy BiGram without space");
+        System.out.println(entropyBiGramNoSpace());
+
+        System.out.println();
     }
 
-    private String filter(String path) throws IOException {
-        InputStream srcFile = new FileInputStream(path);
+    private String filter() throws IOException {
+        InputStream srcFile = new FileInputStream(Tools.FILE_PATH);
         String temp = readFromInputStream(srcFile);
 
         temp = temp.replaceAll("ё", "e").replaceAll("ъ", "ь");
@@ -43,8 +69,8 @@ public class Tools {
         return temp;
     }
 
-    private String filterWithSpaces(String path) throws IOException {
-        InputStream srcFile = new FileInputStream(path);
+    private String filterWithSpaces() throws IOException {
+        InputStream srcFile = new FileInputStream(Tools.FILE_PATH);
         String temp = readFromInputStream(srcFile);
 
         temp = temp.replaceAll("ё", "e").replaceAll("ъ", "ь");
@@ -67,7 +93,7 @@ public class Tools {
         return resultStringBuilder.toString();
     }
 
-    private Map<Character, Integer> calLetter(String input) {
+    private Map<Character, Integer> calGram(String input) {
         Map<Character, Integer> letters = new HashMap<>();
 
         for (int i = 0; i < input.length(); i++) {
@@ -83,7 +109,7 @@ public class Tools {
         return letters;
     }
 
-    private Map<Character, Double> calLetterFrequency(Map<Character, Integer> map) {
+    private Map<Character, Double> calGramFrequency(Map<Character, Integer> map) {
         Map<Character, Double> frequency = new HashMap<>();
         int letterSummary = 0;
         for (Integer value : map.values()) {
@@ -98,8 +124,85 @@ public class Tools {
         return frequency;
     }
 
-    private long calBiGram(String input){
-        throw new UnsupportedOperationException();
+    private Map<String, Integer> calBiGram(String input){
+        Map<String, Integer> bigram = new TreeMap<>();
+
+        for(int i = 0; i < input.length() - 1; i+=2) {
+            char c1 = input.charAt(i);
+            char c2 = input.charAt(i + 1);
+            String temp = c1 + String.valueOf(c2);
+
+            if (!bigram.containsKey(temp)) {
+                bigram.put(temp, 1);
+            } else {
+                int n = bigram.get(temp);
+                bigram.put(temp, (n + 1));
+            }
+        }
+
+        return bigram;
     }
 
+    private Map<String, Integer> calBiGramCross(String input){
+        Map<String, Integer> bigram = new TreeMap<>();
+
+        for(int i = 0; i < input.length() - 1; i++) {
+            char c1 = input.charAt(i);
+            char c2 = input.charAt(i + 1);
+            String temp = c1 + String.valueOf(c2);
+
+            if (!bigram.containsKey(temp)) {
+                bigram.put(temp, 1);
+            } else {
+                int n = bigram.get(temp);
+                bigram.put(temp, (n + 1));
+            }
+        }
+
+        return bigram;
+    }
+
+    private double entropyMonoGramNoSpace(){
+        double entropy = 0;
+        double[] freq = mapFrequencyMonoGram.values().stream().mapToDouble(Double::doubleValue).toArray();
+
+        for (double i : freq){
+            entropy += i * Math.log(i);
+        }
+
+        return -entropy;
+    }
+
+    private double entropyMonoGramSpace(){
+        double entropy = 0;
+        double[] freq = mapFrequencyWithSpacesMonoGram.values().stream().mapToDouble(Double::doubleValue).toArray();
+
+        for (double i : freq){
+            entropy += i * Math.log(i);
+        }
+
+        return -entropy;
+    }
+
+    private double entropyBiGramNoSpace() {
+        double entropy = 0;
+        double[] freq = null;
+
+        for (double i : freq){
+            entropy += i * Math.log(i);
+        }
+
+        return -entropy;
+    }
+
+    private double entropyBiGramSpace() {
+        double entropy = 0;
+        double[] freq = null;
+
+        for (double i : freq){
+            entropy += i * Math.log(i);
+        }
+
+        return -entropy;
+    }
 }
