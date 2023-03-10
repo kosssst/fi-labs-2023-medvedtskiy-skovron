@@ -7,42 +7,53 @@ import java.util.Map;
 // calBigram 2 methods
 // H1, H2
 
-// bug # symbols
-
 public class Tools {
-
-    private final InputStream srcFile = new FileInputStream("cp_1/medvedtskyi-fi-04-skovron-fi-04-cp1/src/sourceText.txt");
-    private final InputStream clearTxt;
-
     Tools() throws IOException {
-        filter();
-        clearTxt = new FileInputStream("cp_1/medvedtskyi-fi-04-skovron-fi-04-cp1/src/nFile.txt");
+
     }
 
     public void run() throws IOException {
-        var map = calLetter(readFromInputStream(clearTxt).replaceAll("\n", ""));
+        Map<Character, Integer> map = calLetter(filter("cp_1/medvedtskyi-fi-04-skovron-fi-04-cp1/src/Война и мир all in.txt"));
+        Map<Character, Integer> mapWithSpaces = calLetter(filterWithSpaces("cp_1/medvedtskyi-fi-04-skovron-fi-04-cp1/src/Война и мир all in.txt"));
+        Map<Character, Double> mapFrequency = calLetterFrequency(map);
+        Map<Character, Double> mapFrequencyWithSpaces = calLetterFrequency(mapWithSpaces);
 
+        System.out.println("\nWithout spaces:");
         map.forEach((key, value) -> System.out.println(key + ":" + value));
+
+        System.out.println("\nWith spaces:");
+        mapWithSpaces.forEach((key, value) -> System.out.println(key + ":" + value));
+
+        System.out.println("\nFrequency without spaces:");
+        mapFrequency.forEach((key, value) -> System.out.println(key + ":" + (value*100.0) + "%"));
+
+        System.out.println("\nFrequency with spaces:");
+        mapFrequencyWithSpaces.forEach((key, value) -> System.out.println(key + ":" + (value*100.0) + "%"));
     }
 
-    private void filter() throws IOException {
+    private String filter(String path) throws IOException {
+        InputStream srcFile = new FileInputStream(path);
         String temp = readFromInputStream(srcFile);
 
         temp = temp.replaceAll("ё", "e").replaceAll("ъ", "ь");
         temp = temp.replaceAll("[^^а-яА-Я]", "");
+        temp = temp.replaceAll("\n", "");
         temp = temp.toLowerCase();
 
-        try {
-            File file = new File("cp_1/medvedtskyi-fi-04-skovron-fi-04-cp1/src/nFile.txt");
-            FileWriter writer = new FileWriter(file);
-            writer.write(temp);
-            writer.close();
+        return temp;
+    }
 
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+    private String filterWithSpaces(String path) throws IOException {
+        InputStream srcFile = new FileInputStream(path);
+        String temp = readFromInputStream(srcFile);
 
+        temp = temp.replaceAll("ё", "e").replaceAll("ъ", "ь");
+        temp = temp.replaceAll("[^^а-яА-Я\\s]", "");
+        temp = temp.replaceAll("\\s+", " ");
+        temp = temp.replaceAll("\n", "");
+        temp = temp.toLowerCase();
+
+        return temp;
     }
 
     private String readFromInputStream(InputStream inputStream) throws IOException {
@@ -70,6 +81,21 @@ public class Tools {
         }
 
         return letters;
+    }
+
+    private Map<Character, Double> calLetterFrequency(Map<Character, Integer> map) {
+        Map<Character, Double> frequency = new HashMap<>();
+        int letterSummary = 0;
+        for (Integer value : map.values()) {
+            letterSummary += value;
+        }
+        for (Map.Entry<Character, Integer> entry : map.entrySet()) {
+            Character key = entry.getKey();
+            Integer value = entry.getValue();
+            double percentage = ((double) value)/((double) letterSummary);
+            frequency.put(key, percentage);
+        }
+        return frequency;
     }
 
     private long calBiGram(String input){
