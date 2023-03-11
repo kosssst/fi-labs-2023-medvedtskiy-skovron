@@ -1,5 +1,8 @@
+import java.io.*;
+
 public class Main {
-    public static void main(String[] args) {
-        System.out.println("Hello world1!");
+    public static void main(String[] args) throws IOException {
+        Tools app = new Tools();
+        app.run();
     }
 }
