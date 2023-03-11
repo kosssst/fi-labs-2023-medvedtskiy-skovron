@@ -6,25 +6,25 @@ import java.util.*;
 public class Tools {
     private final static String FILE_PATH = "cp_1/medvedtskyi-fi-04-skovron-fi-04-cp1/src/Война и мир all in.txt";
 
-    Map<Character, Integer> mapMonoGram = null;
-    Map<Character, Integer> mapWithSpacesMonoGram = null;
+    private final Map<Character, Integer> mapMonoGram;
+    private final Map<Character, Integer> mapWithSpacesMonoGram;
 
-    Map<String, Integer> mapBiGram = null;
-    Map<String, Integer> mapBiGramCross = null;
+    private final Map<String, Integer> mapBiGram;
+    private final Map<String, Integer> mapBiGramCross;
 
-    Map<String, Integer> mapBiGramWithSpaces = null;
-    Map<String, Integer> mapBiGramCrossWithSpaces = null;
+    private final Map<String, Integer> mapBiGramWithSpaces;
+    private final Map<String, Integer> mapBiGramCrossWithSpaces;
 
-    Map<Character, Double> mapFrequencyMonoGram = null;
-    Map<Character, Double> mapFrequencyWithSpacesMonoGram = null;
+    private final Map<Character, Double> mapFrequencyMonoGram;
+    private final Map<Character, Double> mapFrequencyWithSpacesMonoGram;
 
-    Map<String, Double> mapFrequencyBiGram = null;
-    Map<String, Double> mapFrequencyBiGramCross = null;
+    private final Map<String, Double> mapFrequencyBiGram;
+    private final Map<String, Double> mapFrequencyBiGramCross;
 
-    Map<String, Double> mapFrequencyBiGramWithSpaces = null;
-    Map<String, Double> mapFrequencyBiGramCrossWithSpaces = null;
+    private final Map<String, Double> mapFrequencyBiGramWithSpaces;
+    private final Map<String, Double> mapFrequencyBiGramCrossWithSpaces;
 
-    Tools() throws IOException {
+    public Tools() throws IOException {
         mapMonoGram = calGram(filter());
         mapWithSpacesMonoGram = calGram(filterWithSpaces());
 
@@ -44,7 +44,7 @@ public class Tools {
         mapFrequencyBiGramCrossWithSpaces = calBiGramFrequency(mapBiGramCrossWithSpaces);
     }
 
-    public void run() throws IOException {
+    public void run() {
         System.out.println("\n\nMonograms without spaces:");
         mapMonoGram.forEach((key, value) -> System.out.println(key + ": " + value));
 
@@ -52,10 +52,10 @@ public class Tools {
         mapWithSpacesMonoGram.forEach((key, value) -> System.out.println(key + ": " + value));
 
         System.out.println("\n\nMonogram frequency without spaces:");
-        mapFrequencyMonoGram.forEach((key, value) -> System.out.println(key + ": " + (value*100.0) + " %"));
+        mapFrequencyMonoGram.forEach((key, value) -> System.out.println(key + ": " + (value * 100.0) + " %"));
 
         System.out.println("\n\nMonogram frequency with spaces:");
-        mapFrequencyWithSpacesMonoGram.forEach((key, value) -> System.out.println(key + ": " + (value*100.0) + " %"));
+        mapFrequencyWithSpacesMonoGram.forEach((key, value) -> System.out.println(key + ": " + (value * 100.0) + " %"));
 
         System.out.println("\n\nBiGram with no crossing and no spaces:");
         mapBiGram.forEach((key, value) -> System.out.println(key + ": " + value));
@@ -70,16 +70,16 @@ public class Tools {
         mapBiGramCrossWithSpaces.forEach((key, value) -> System.out.println(key + ": " + value));
 
         System.out.println("\n\nBigram frequency without spaces and crossing:");
-        mapFrequencyBiGram.forEach((key, value) -> System.out.println(key + ": " + (value*100.0) + " %"));
+        mapFrequencyBiGram.forEach((key, value) -> System.out.println(key + ": " + (value * 100.0) + " %"));
 
         System.out.println("\n\nBigram frequency with crossing and without spaces:");
-        mapFrequencyBiGramCross.forEach((key, value) -> System.out.println(key + ": " + (value*100.0) + " %"));
+        mapFrequencyBiGramCross.forEach((key, value) -> System.out.println(key + ": " + (value * 100.0) + " %"));
 
         System.out.println("\n\nBigram frequency with spaces and no crossing:");
-        mapFrequencyBiGramWithSpaces.forEach((key, value) -> System.out.println(key + ": " + (value*100.0) + " %"));
+        mapFrequencyBiGramWithSpaces.forEach((key, value) -> System.out.println(key + ": " + (value * 100.0) + " %"));
 
         System.out.println("\n\nBigram frequency with spaces and crossing:");
-        mapFrequencyBiGramCrossWithSpaces.forEach((key, value) -> System.out.println(key + ": " + (value*100.0) + " %"));
+        mapFrequencyBiGramCrossWithSpaces.forEach((key, value) -> System.out.println(key + ": " + (value * 100.0) + " %"));
 
         System.out.println("\n\nEntropy MonoGram without spaces: " + entropyMonoGram(mapFrequencyMonoGram));
 
@@ -144,7 +144,7 @@ public class Tools {
         }
 
         List<Map.Entry<Character, Integer>> listForSort = new ArrayList<>(letters.entrySet());
-        listForSort.sort(Comparator.comparing(Map.Entry::getValue, Comparator.reverseOrder()));
+        listForSort.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
 
         Map<Character, Integer> sortedLetters = new LinkedHashMap<>();
         for (Map.Entry<Character, Integer> entry : listForSort) {
@@ -165,12 +165,12 @@ public class Tools {
         for (Map.Entry<Character, Integer> entry : map.entrySet()) {
             Character key = entry.getKey();
             Integer value = entry.getValue();
-            double percentage = ((double) value)/((double) letterSummary);
+            double percentage = ((double) value) / ((double) letterSummary);
             frequency.put(key, percentage);
         }
 
         List<Map.Entry<Character, Double>> listForSort = new ArrayList<>(frequency.entrySet());
-        listForSort.sort(Comparator.comparing(Map.Entry::getValue, Comparator.reverseOrder()));
+        listForSort.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
 
         Map<Character, Double> sortedFrequency = new LinkedHashMap<>();
         for (Map.Entry<Character, Double> entry : listForSort) {
@@ -180,10 +180,10 @@ public class Tools {
         return sortedFrequency;
     }
 
-    private Map<String, Integer> calBiGram(String input){
+    private Map<String, Integer> calBiGram(String input) {
         Map<String, Integer> bigram = new TreeMap<>();
 
-        for(int i = 0; i < input.length() - 1; i+=2) {
+        for (int i = 0; i < input.length() - 1; i += 2) {
             char c1 = input.charAt(i);
             char c2 = input.charAt(i + 1);
             String temp = c1 + String.valueOf(c2);
@@ -197,7 +197,7 @@ public class Tools {
         }
 
         List<Map.Entry<String, Integer>> listForSort = new ArrayList<>(bigram.entrySet());
-        listForSort.sort(Comparator.comparing(Map.Entry::getValue, Comparator.reverseOrder()));
+        listForSort.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
 
         Map<String, Integer> sortedBigram = new LinkedHashMap<>();
         for (Map.Entry<String, Integer> entry : listForSort) {
@@ -207,10 +207,10 @@ public class Tools {
         return sortedBigram;
     }
 
-    private Map<String, Integer> calBiGramCross(String input){
+    private Map<String, Integer> calBiGramCross(String input) {
         Map<String, Integer> bigram = new TreeMap<>();
 
-        for(int i = 0; i < input.length() - 1; i++) {
+        for (int i = 0; i < input.length() - 1; i++) {
             char c1 = input.charAt(i);
             char c2 = input.charAt(i + 1);
             String temp = c1 + String.valueOf(c2);
@@ -224,7 +224,7 @@ public class Tools {
         }
 
         List<Map.Entry<String, Integer>> listForSort = new ArrayList<>(bigram.entrySet());
-        listForSort.sort(Comparator.comparing(Map.Entry::getValue, Comparator.reverseOrder()));
+        listForSort.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
 
         Map<String, Integer> sortedBigram = new LinkedHashMap<>();
         for (Map.Entry<String, Integer> entry : listForSort) {
@@ -245,12 +245,12 @@ public class Tools {
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             String key = entry.getKey();
             Integer value = entry.getValue();
-            double percentage = ((double) value)/((double) letterSummary);
+            double percentage = ((double) value) / ((double) letterSummary);
             frequency.put(key, percentage);
         }
 
         List<Map.Entry<String, Double>> listForSort = new ArrayList<>(frequency.entrySet());
-        listForSort.sort(Comparator.comparing(Map.Entry::getValue, Comparator.reverseOrder()));
+        listForSort.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
 
         Map<String, Double> sortedFrequency = new LinkedHashMap<>();
         for (Map.Entry<String, Double> entry : listForSort) {
@@ -260,26 +260,26 @@ public class Tools {
         return sortedFrequency;
     }
 
-    private double entropyMonoGram(Map<Character, Double> map){
+    private double entropyMonoGram(Map<Character, Double> map) {
         double entropy = 0;
         double[] freq = map.values().stream().mapToDouble(Double::doubleValue).toArray();
 
-        for (double i : freq){
+        for (double i : freq) {
             entropy += i * Math.log(i);
         }
 
         return -entropy;
     }
 
-    private double entropyBiGram(Map<String, Double> map){
+    private double entropyBiGram(Map<String, Double> map) {
         double entropy = 0;
         double[] freq = map.values().stream().mapToDouble(Double::doubleValue).toArray();
 
-        for (double i : freq){
+        for (double i : freq) {
             entropy += i * Math.log(i);
         }
 
-        return -entropy/2.0;
+        return -entropy / 2.0;
     }
 
 }
