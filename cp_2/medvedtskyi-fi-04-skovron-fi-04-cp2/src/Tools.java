@@ -1,4 +1,6 @@
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class Tools {
@@ -18,6 +20,13 @@ public class Tools {
         String key5 = generateKey(5);
         String key10 = generateKey(10);
 
+        String openText = filter();
+        String encodedByKey2 = encode(openText, key2);
+        String encodedByKey3 = encode(openText, key3);
+        String encodedByKey4 = encode(openText, key4);
+        String encodedByKey5 = encode(openText, key5);
+        String encodedByKey10 = encode(openText, key10);
+
         System.out.println(key2);
         System.out.println("****************************************************");
         System.out.println(key3);
@@ -28,17 +37,23 @@ public class Tools {
         System.out.println("****************************************************");
         System.out.println(key10);
         System.out.println("****************************************************");
-        System.out.println(filter());
+        System.out.println("I = " + calculateI(openText));
+        System.out.println(openText);
         System.out.println("****************************************************");
-        System.out.println(encode(filter(), key2));
+        System.out.println("I = " + calculateI(encodedByKey2));
+        System.out.println(encodedByKey2);
         System.out.println("****************************************************");
-        System.out.println(encode(filter(), key3));
+        System.out.println("I = " + calculateI(encodedByKey3));
+        System.out.println(encodedByKey3);
         System.out.println("****************************************************");
-        System.out.println(encode(filter(), key4));
+        System.out.println("I = " + calculateI(encodedByKey4));
+        System.out.println(encodedByKey4);
         System.out.println("****************************************************");
-        System.out.println(encode(filter(), key5));
+        System.out.println("I = " + calculateI(encodedByKey5));
+        System.out.println(encodedByKey5);
         System.out.println("****************************************************");
-        System.out.println(encode(filter(), key10));
+        System.out.println("I = " + calculateI(encodedByKey10));
+        System.out.println(encodedByKey10);
 
         out.close();
     }
@@ -71,10 +86,9 @@ public class Tools {
 
     private String encode(String text, String key){
         int indexInKey = 0;
-        int len = text.length();
-        StringBuilder builder = new StringBuilder(len);
+        StringBuilder builder = new StringBuilder(text.length());
 
-        for (int i = 0; i < len; i++) {
+        for (int i = 0; i < text.length(); i++) {
             builder.append(symbols.charAt(((symbols.indexOf(text.charAt(i)) + 1) + (symbols.indexOf(key.charAt(indexInKey)) + 1) - 1) % 32));
             indexInKey += 1;
             indexInKey = indexInKey % key.length();
@@ -93,5 +107,30 @@ public class Tools {
         }
 
         return builder.toString();
+    }
+
+    private float calculateI(String text){
+        Map<Character, Integer> letters = calculateLetters(text);
+        float sum = 0;
+        for (Integer value : letters.values()) {
+            sum += ((float)value * ((float)value - 1));
+        }
+        return (float) (sum / (text.length() * (text.length() - 1)));
+    }
+
+    private Map<Character, Integer> calculateLetters(String text){
+        Map<Character, Integer> letters = new HashMap<>();
+
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (!letters.containsKey(c)) {
+                letters.put(c, 1);
+            } else {
+                int n = letters.get(c);
+                letters.put(c, (n + 1));
+            }
+        }
+
+        return letters;
     }
 }
