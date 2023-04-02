@@ -7,13 +7,14 @@ public class Tools {
     private static final String symbols = "абвгдежзийклмнопрстуфхцчшщъыьэюя";
     private static final String FILE_PATH_TO_ENCODE = "cp_2/medvedtskyi-fi-04-skovron-fi-04-cp2/src/windows_license.txt";
     private static final String FILE_PATH_TO_DECODE = "cp_2/medvedtskyi-fi-04-skovron-fi-04-cp2/src/to_decode.txt";
+
     public Tools(){
 
     }
 
     public void run() throws IOException {
-//        PrintStream out = new PrintStream(new FileOutputStream("output.txt"));
-//        System.setOut(out);
+        PrintStream out = new PrintStream(new FileOutputStream("output.txt"));
+        System.setOut(out);
 
         String key2 = generateKey(2);
         String key3 = generateKey(3);
@@ -30,37 +31,32 @@ public class Tools {
 
         String EncodedText = filter(FILE_PATH_TO_DECODE);
 
-//        System.out.println(key2);
-//        System.out.println("****************************************************");
-//        System.out.println(key3);
-//        System.out.println("****************************************************");
-//        System.out.println(key4);
-//        System.out.println("****************************************************");
-//        System.out.println(key5);
-//        System.out.println("****************************************************");
-//        System.out.println(key10);
-//        System.out.println("****************************************************");
-//        System.out.println("I = " + calculateI(openText));
-//        System.out.println(openText);
-//        System.out.println("****************************************************");
-//        System.out.println("I = " + calculateI(encodedByKey2));
-//        System.out.println(encodedByKey2);
-//        System.out.println("****************************************************");
-//        System.out.println("I = " + calculateI(encodedByKey3));
-//        System.out.println(encodedByKey3);
-//        System.out.println("****************************************************");
-//        System.out.println("I = " + calculateI(encodedByKey4));
-//        System.out.println(encodedByKey4);
-//        System.out.println("****************************************************");
-//        System.out.println("I = " + calculateI(encodedByKey5));
-//        System.out.println(encodedByKey5);
-//        System.out.println("****************************************************");
-//        System.out.println("I = " + calculateI(encodedByKey10));
-//        System.out.println(encodedByKey10);
+        System.out.println("Ключ 1: " + key2);
+        System.out.println("Ключ 2: " + key3);
+        System.out.println("Ключ 3: " + key4);
+        System.out.println("Ключ 4: " + key5);
+        System.out.println("Ключ 5: " + key10);
+        System.out.println();
+
+        System.out.println(openText);
+        System.out.println(encodedByKey2);
+        System.out.println(encodedByKey3);
+        System.out.println(encodedByKey4);
+        System.out.println(encodedByKey5);
+        System.out.println(encodedByKey10);
+        System.out.println();
+
+        System.out.println("I = " + calculateI(openText));
+        System.out.println("I = " + calculateI(encodedByKey2));
+        System.out.println("I = " + calculateI(encodedByKey3));
+        System.out.println("I = " + calculateI(encodedByKey5));
+        System.out.println("I = " + calculateI(encodedByKey4));
+        System.out.println("I = " + calculateI(encodedByKey10));
+        System.out.println();
 
         System.out.println("Length of key:");
         calculateKeyLength(EncodedText).forEach((key, value) -> System.out.println(key + ": " + value));
-//        out.close();
+        out.close();
     }
 
     private String filter(String filePath) throws IOException {
