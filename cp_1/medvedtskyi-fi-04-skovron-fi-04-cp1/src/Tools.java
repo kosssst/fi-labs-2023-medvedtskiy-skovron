@@ -265,10 +265,10 @@ public class Tools {
         double[] freq = map.values().stream().mapToDouble(Double::doubleValue).toArray();
 
         for (double i : freq) {
-            entropy += i * Math.log(i);
+            entropy -= i * log2(i);
         }
 
-        return -entropy;
+        return entropy;
     }
 
     private double entropyBiGram(Map<String, Double> map) {
@@ -276,10 +276,13 @@ public class Tools {
         double[] freq = map.values().stream().mapToDouble(Double::doubleValue).toArray();
 
         for (double i : freq) {
-            entropy += i * Math.log(i);
+            entropy -= i * log2(i);
         }
 
-        return -entropy / 2.0;
+        return entropy / 2.0;
     }
 
+    private double log2(Double n) {
+        return Math.log(n)/Math.log(2);
+    }
 }
