@@ -7,56 +7,58 @@ public class Tools {
     private static final String symbols = "абвгдежзийклмнопрстуфхцчшщъыьэюя";
     private static final String FILE_PATH_TO_ENCODE = "cp_2/medvedtskyi-fi-04-skovron-fi-04-cp2/src/windows_license.txt";
     private static final String FILE_PATH_TO_DECODE = "cp_2/medvedtskyi-fi-04-skovron-fi-04-cp2/src/to_decode.txt";
+    private static final int keyLength = 17;
 
     public Tools(){
 
     }
 
     public void run() throws IOException {
-        PrintStream out = new PrintStream(new FileOutputStream("output.txt"));
-        System.setOut(out);
-
-        String key2 = generateKey(2);
-        String key3 = generateKey(3);
-        String key4 = generateKey(4);
-        String key5 = generateKey(5);
-        String key10 = generateKey(10);
-
-        String openText = filter(FILE_PATH_TO_ENCODE);
-        String encodedByKey2 = encode(openText, key2);
-        String encodedByKey3 = encode(openText, key3);
-        String encodedByKey4 = encode(openText, key4);
-        String encodedByKey5 = encode(openText, key5);
-        String encodedByKey10 = encode(openText, key10);
-
+//        PrintStream out = new PrintStream(new FileOutputStream("output.txt"));
+//        System.setOut(out);
+//
+//        String key2 = generateKey(2);
+//        String key3 = generateKey(3);
+//        String key4 = generateKey(4);
+//        String key5 = generateKey(5);
+//        String key10 = generateKey(10);
+//
+//        String openText = filter(FILE_PATH_TO_ENCODE);
+//        String encodedByKey2 = encode(openText, key2);
+//        String encodedByKey3 = encode(openText, key3);
+//        String encodedByKey4 = encode(openText, key4);
+//        String encodedByKey5 = encode(openText, key5);
+//        String encodedByKey10 = encode(openText, key10);
+//
         String EncodedText = filter(FILE_PATH_TO_DECODE);
-
-        System.out.println("Ключ 1: " + key2);
-        System.out.println("Ключ 2: " + key3);
-        System.out.println("Ключ 3: " + key4);
-        System.out.println("Ключ 4: " + key5);
-        System.out.println("Ключ 5: " + key10);
-        System.out.println();
-
-        System.out.println(openText);
-        System.out.println(encodedByKey2);
-        System.out.println(encodedByKey3);
-        System.out.println(encodedByKey4);
-        System.out.println(encodedByKey5);
-        System.out.println(encodedByKey10);
-        System.out.println();
-
-        System.out.println("I = " + calculateI(openText));
-        System.out.println("I = " + calculateI(encodedByKey2));
-        System.out.println("I = " + calculateI(encodedByKey3));
-        System.out.println("I = " + calculateI(encodedByKey5));
-        System.out.println("I = " + calculateI(encodedByKey4));
-        System.out.println("I = " + calculateI(encodedByKey10));
-        System.out.println();
-
-        System.out.println("Length of key:");
-        calculateKeyLength(EncodedText).forEach((key, value) -> System.out.println(key + ": " + value));
-        out.close();
+//
+//        System.out.println("Ключ 1: " + key2);
+//        System.out.println("Ключ 2: " + key3);
+//        System.out.println("Ключ 3: " + key4);
+//        System.out.println("Ключ 4: " + key5);
+//        System.out.println("Ключ 5: " + key10);
+//        System.out.println();
+//
+//        System.out.println(openText);
+//        System.out.println(encodedByKey2);
+//        System.out.println(encodedByKey3);
+//        System.out.println(encodedByKey4);
+//        System.out.println(encodedByKey5);
+//        System.out.println(encodedByKey10);
+//        System.out.println();
+//
+//        System.out.println("I = " + calculateI(openText));
+//        System.out.println("I = " + calculateI(encodedByKey2));
+//        System.out.println("I = " + calculateI(encodedByKey3));
+//        System.out.println("I = " + calculateI(encodedByKey5));
+//        System.out.println("I = " + calculateI(encodedByKey4));
+//        System.out.println("I = " + calculateI(encodedByKey10));
+//        System.out.println();
+//
+//        System.out.println("Length of key:");
+//        calculateKeyLength(EncodedText).forEach((key, value) -> System.out.println(key + ": " + value));
+//        out.close();
+        System.out.println(findKey(EncodedText));
     }
 
     private String filter(String filePath) throws IOException {
@@ -155,4 +157,52 @@ public class Tools {
         }
         return r;
     }
-}
+
+    private String findKey(String text) {
+        StringBuilder[] rows = separateText(text);
+        StringBuilder key = new StringBuilder();
+        for (int i = 0; i < keyLength; i++) {
+            key.append(symbols.charAt((symbols.indexOf(max(calcFrequency(rows[i].toString()))) - symbols.indexOf('о') + 32) % 32));
+        }
+        return key.toString();
+    }
+    private Map<Character, Double> calcFrequency(String text) {
+        Map<Character, Integer> characters = initEmptyMap();
+        Map<Character, Double> frequency = new HashMap<>();
+        for (int i = 0; i < text.length(); i++) {
+            characters.put(text.charAt(i), characters.get(text.charAt(i)) + 1);
+        }
+        characters.forEach((key, value) -> frequency.put(key, ((double)value / (double)text.length())));
+        return frequency;
+    }
+    private StringBuilder[] separateText(String text) {
+        StringBuilder[] rows = new StringBuilder[keyLength];
+        for (int i = 0; i < keyLength; i++) {
+            rows[i] = new StringBuilder();
+        }
+        int k = 0;
+        while(k < text.length()) {
+            rows[(k % keyLength)].append(text.charAt(k));
+            k++;
+        }
+        return rows;
+    }
+    private Map<Character, Integer> initEmptyMap() {
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < symbols.length(); i++) {
+            map.put(symbols.charAt(i), 0);
+        }
+        return map;
+    }
+    private Character max(Map<Character, Double> frequency) {
+        char cMax = '-';
+        double dMax = 0;
+        for (Map.Entry<Character, Double> entry : frequency.entrySet()) {
+            if (entry.getValue() > dMax) {
+                dMax = entry.getValue();
+                cMax = entry.getKey();
+            }
+        }
+        return cMax;
+    }
+ }
