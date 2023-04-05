@@ -80,12 +80,11 @@ public class Tools {
         System.out.println(encodedByKey10);
         System.out.println();
 
-        System.out.println("I = " + calculateI(openText));
-        System.out.println("I = " + calculateI(encodedByKey2));
-        System.out.println("I = " + calculateI(encodedByKey3));
-        System.out.println("I = " + calculateI(encodedByKey5));
-        System.out.println("I = " + calculateI(encodedByKey4));
-        System.out.println("I = " + calculateI(encodedByKey10));
+        System.out.println("I (key 1) = " + calculateI(encodedByKey2));
+        System.out.println("I (key 2) = " + calculateI(encodedByKey3));
+        System.out.println("I (key 3) = " + calculateI(encodedByKey4));
+        System.out.println("I (key 4) = " + calculateI(encodedByKey5));
+        System.out.println("I (key 5) = " + calculateI(encodedByKey10));
         System.out.println();
 
         System.out.println("Length of key:");
@@ -99,7 +98,7 @@ public class Tools {
         System.out.println("Decoded with first key:");
         System.out.println(decode(EncodedText, findKey(EncodedText)));
 
-        System.out.println("Decoded with first key:");
+        System.out.println("Decoded with second key:");
         System.out.println(decode(EncodedText, findKeyViaM(EncodedText)));
         out.close();
     }
@@ -156,28 +155,12 @@ public class Tools {
     }
 
     private float calculateI(String text) {
-        Map<Character, Integer> letters = calculateLetters(text);
+        Map<Character, Integer> letters = calcLetters(text);
         float sum = 0;
         for (Integer value : letters.values()) {
             sum += ((float)value * ((float)value - 1));
         }
         return (float) (sum / (text.length() * (text.length() - 1)));
-    }
-
-    private Map<Character, Integer> calculateLetters(String text) {
-        Map<Character, Integer> letters = new HashMap<>();
-
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
-            if (!letters.containsKey(c)) {
-                letters.put(c, 1);
-            } else {
-                int n = letters.get(c);
-                letters.put(c, (n + 1));
-            }
-        }
-
-        return letters;
     }
 
     private Map<Integer, Float> calculateKeyLength(String text) {
@@ -209,12 +192,14 @@ public class Tools {
         }
         return key.toString();
     }
+
     private Map<Character, Double> calcFrequency(String text) {
         Map<Character, Integer> characters = calcLetters(text);
         Map<Character, Double> frequency = new HashMap<>();
         characters.forEach((key, value) -> frequency.put(key, ((double)value / (double)text.length())));
         return frequency;
     }
+
     private StringBuilder[] separateText(String text) {
         StringBuilder[] rows = new StringBuilder[keyLength];
         for (int i = 0; i < keyLength; i++) {
@@ -227,6 +212,7 @@ public class Tools {
         }
         return rows;
     }
+
     private Map<Character, Integer> initEmptyMap() {
         Map<Character, Integer> map = new HashMap<>();
         for (int i = 0; i < symbols.length(); i++) {
@@ -234,6 +220,7 @@ public class Tools {
         }
         return map;
     }
+
     private Character max(Map<Character, Double> frequency) {
         char cMax = '-';
         double dMax = 0;
@@ -280,4 +267,6 @@ public class Tools {
         }
         return openText.toString();
     }
+
+    
  }
