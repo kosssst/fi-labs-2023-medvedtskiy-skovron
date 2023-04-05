@@ -8,9 +8,42 @@ public class Tools {
     private static final String FILE_PATH_TO_ENCODE = "cp_2/medvedtskyi-fi-04-skovron-fi-04-cp2/src/windows_license.txt";
     private static final String FILE_PATH_TO_DECODE = "cp_2/medvedtskyi-fi-04-skovron-fi-04-cp2/src/to_decode.txt";
     private static final int keyLength = 17;
+    private final Map<Character, Double> letterFrequency;
 
     public Tools(){
-
+        letterFrequency = new HashMap<>();
+        letterFrequency.put('о', 0.11540391238792298);
+        letterFrequency.put('е', 0.08236945108644807);
+        letterFrequency.put('а', 0.08190993805712148);
+        letterFrequency.put('и', 0.06786302508392858);
+        letterFrequency.put('н', 0.06479264256979181);
+        letterFrequency.put('т', 0.05861445507890265);
+        letterFrequency.put('с', 0.05329828966291499);
+        letterFrequency.put('л', 0.050160459687087294);
+        letterFrequency.put('в', 0.04626808843014945);
+        letterFrequency.put('р', 0.04428339247677958);
+        letterFrequency.put('к', 0.033624517805042026);
+        letterFrequency.put('д', 0.030659005215211796);
+        letterFrequency.put('м', 0.029640766116135826);
+        letterFrequency.put('у', 0.02722136039354506);
+        letterFrequency.put('п', 0.026334970203452004);
+        letterFrequency.put('я', 0.022014416351005293);
+        letterFrequency.put('г', 0.019695964248493854);
+        letterFrequency.put('ь', 0.01949057584902212);
+        letterFrequency.put('ы', 0.019370040707806718);
+        letterFrequency.put('б', 0.017395788232376086);
+        letterFrequency.put('з', 0.017139052733036418);
+        letterFrequency.put('ч', 0.014454643757737421);
+        letterFrequency.put('й', 0.011201935524578073);
+        letterFrequency.put('ж', 0.010659744961565826);
+        letterFrequency.put('ш', 0.009276854424444701);
+        letterFrequency.put('х', 0.008606731256676754);
+        letterFrequency.put('ю', 0.006139024448617001);
+        letterFrequency.put('ц', 0.0036029998890380467);
+        letterFrequency.put('э', 0.0030677716446519602);
+        letterFrequency.put('щ', 0.002962901720345418);
+        letterFrequency.put('ф', 0.0020482271108335855);
+        letterFrequency.put('ъ', 0.0004290528853371394);
     }
 
     public void run() throws IOException {
@@ -58,7 +91,9 @@ public class Tools {
 //        System.out.println("Length of key:");
 //        calculateKeyLength(EncodedText).forEach((key, value) -> System.out.println(key + ": " + value));
 //        out.close();
-        System.out.println(findKey(EncodedText));
+//        System.out.println(findKey(EncodedText));
+        System.out.println(findKeyViaM(EncodedText));
+        System.out.println(decode(EncodedText, findKeyViaM(EncodedText)));
     }
 
     private String filter(String filePath) throws IOException {
@@ -167,11 +202,8 @@ public class Tools {
         return key.toString();
     }
     private Map<Character, Double> calcFrequency(String text) {
-        Map<Character, Integer> characters = initEmptyMap();
+        Map<Character, Integer> characters = calcLetters(text);
         Map<Character, Double> frequency = new HashMap<>();
-        for (int i = 0; i < text.length(); i++) {
-            characters.put(text.charAt(i), characters.get(text.charAt(i)) + 1);
-        }
         characters.forEach((key, value) -> frequency.put(key, ((double)value / (double)text.length())));
         return frequency;
     }
@@ -204,5 +236,40 @@ public class Tools {
             }
         }
         return cMax;
+    }
+    private String findKeyViaM(String text) {
+        StringBuilder[] Y = separateText(text);
+        StringBuilder key = new StringBuilder();
+        for (int i = 0; i < keyLength; i++) {
+            Map<Character, Integer> letters = calcLetters(Y[i].toString());
+            double maxM = 0;
+            int charId = 0;
+            for (int g = 0; g < 32; g++) {
+                double currentM = 0;
+                for (int t = 0; t < 32; t++) {
+                    currentM += letterFrequency.get(symbols.charAt(t)) * letters.get(symbols.charAt((t + g) % 32));
+                }
+                if (currentM > maxM) {
+                    maxM = currentM;
+                    charId = g;
+                }
+            }
+            key.append(symbols.charAt(charId));
+        }
+        return key.toString();
+    }
+    private Map<Character, Integer> calcLetters(String text) {
+        Map<Character, Integer> letters = initEmptyMap();
+        for (int i = 0; i < text.length(); i++) {
+            letters.put(text.charAt(i), letters.get(text.charAt(i)) + 1);
+        }
+        return letters;
+    }
+    private String decode(String text, String key) {
+        StringBuilder openText = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            openText.append(symbols.charAt((symbols.indexOf(text.charAt(i)) - symbols.indexOf(key.charAt(i % key.length())) + 32) % 32));
+        }
+        return openText.toString();
     }
  }
