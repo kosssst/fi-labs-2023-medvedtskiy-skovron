@@ -14,7 +14,7 @@ public class Tools {
 //        System.out.println(gcd(21, 12));
 //        System.out.println(gcd(25, 12));
 //        System.out.println(gcd(30, 12));
-        System.out.println(reverse(12, 23));
+//        System.out.println(reverse(12, 23));
     }
 
     private int gcd(int a, int b){
@@ -77,8 +77,9 @@ public class Tools {
         }
     }
 
-    private int[] solveLinearComparisons(int[] a){
-        throw new UnsupportedOperationException("to do solving linear comparisons");
+    private int solveLinearComparisons(int[] a) throws Exception {
+        if (gcd(a[1], a[3]) != 1) throw new Exception("gcd is not 1");
+        return (a[0] * a[3] * reverse(a[3], a[1]) + a[2] * a[1] * reverse(a[1], a[3])) % (a[1] * a[3]);
     }
 
     private Map<String, Integer> calculateBigrams(String text){
