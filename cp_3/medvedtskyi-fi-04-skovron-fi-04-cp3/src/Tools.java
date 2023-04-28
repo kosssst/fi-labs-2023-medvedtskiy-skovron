@@ -1,5 +1,5 @@
 import java.io.*;
-import java.util.Map;
+import java.util.*;
 
 public class Tools {
 
@@ -7,7 +7,7 @@ public class Tools {
     private static final String FILE_PATH = "cp_3/medvedtskyi-fi-04-skovron-fi-04-cp3/src/to_decode.txt";
 
     public void run() throws IOException{
-        System.out.println(getText(FILE_PATH));
+        System.out.println(calculateBigrams(getText(FILE_PATH)));
     }
 
     private int gcd(int a, int b){
@@ -22,8 +22,31 @@ public class Tools {
         throw new UnsupportedOperationException("to do solving linear comparisons");
     }
 
-    private Map<Character, Integer> calculateBigrams(String text){
-        throw new UnsupportedOperationException("to do bigrams calculation");
+    private Map<String, Integer> calculateBigrams(String text){
+        Map<String, Integer> bigram = new TreeMap<>();
+
+        for (int i = 0; i < text.length() - 1; i += 2) {
+            char c1 = text.charAt(i);
+            char c2 = text.charAt(i + 1);
+            String temp = c1 + String.valueOf(c2);
+
+            if (!bigram.containsKey(temp)) {
+                bigram.put(temp, 1);
+            } else {
+                int n = bigram.get(temp);
+                bigram.put(temp, (n + 1));
+            }
+        }
+
+        List<Map.Entry<String, Integer>> listForSort = new ArrayList<>(bigram.entrySet());
+        listForSort.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
+
+        Map<String, Integer> sortedBigram = new LinkedHashMap<>();
+        for (Map.Entry<String, Integer> entry : listForSort) {
+            sortedBigram.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedBigram;
     }
 
     private String getText(String filepath) throws IOException {
