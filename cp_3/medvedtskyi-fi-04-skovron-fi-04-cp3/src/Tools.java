@@ -7,11 +7,43 @@ public class Tools {
     private static final String FILE_PATH = "cp_3/medvedtskyi-fi-04-skovron-fi-04-cp3/src/to_decode.txt";
 
     public void run() throws IOException{
-        System.out.println(calculateBigrams(getText(FILE_PATH)));
+//        System.out.println(calculateBigrams(getText(FILE_PATH)));
+        System.out.println(gcd(23, 12));
+        System.out.println(gcd(24, 12));
+        System.out.println(gcd(20, 12));
+        System.out.println(gcd(21, 12));
+        System.out.println(gcd(25, 12));
+        System.out.println(gcd(30, 12));
     }
 
     private int gcd(int a, int b){
-        throw new UnsupportedOperationException("to do gcd calculation");
+        int d = 1;
+
+        while ((a % 2 == 0) && (b % 2 == 0)) {
+            a /= 2;
+            b /= 2;
+            d *= 2;
+        }
+
+        while (a % 2 == 0) {
+            a /= 2;
+        }
+
+        while (b != 0) {
+            while (b % 2 == 0) {
+                b /= 2;
+            }
+            if (a > b) {
+                int temp = a;
+                a = b;
+                b = temp - a;
+            }else{
+                b -= a;
+            }
+        }
+
+        d *= a;
+        return d;
     }
 
     private int reverse(int a, int b){
