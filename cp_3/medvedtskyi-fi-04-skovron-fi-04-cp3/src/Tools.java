@@ -6,14 +6,15 @@ public class Tools {
     private static final String ALPHABET = "абвгдежзийклмнопрстуфхцчшщъыьэюя";
     private static final String FILE_PATH = "cp_3/medvedtskyi-fi-04-skovron-fi-04-cp3/src/to_decode.txt";
 
-    public void run() throws IOException{
+    public void run() throws Exception {
 //        System.out.println(calculateBigrams(getText(FILE_PATH)));
-        System.out.println(gcd(23, 12));
-        System.out.println(gcd(24, 12));
-        System.out.println(gcd(20, 12));
-        System.out.println(gcd(21, 12));
-        System.out.println(gcd(25, 12));
-        System.out.println(gcd(30, 12));
+//        System.out.println(gcd(23, 12));
+//        System.out.println(gcd(24, 12));
+//        System.out.println(gcd(20, 12));
+//        System.out.println(gcd(21, 12));
+//        System.out.println(gcd(25, 12));
+//        System.out.println(gcd(30, 12));
+        System.out.println(reverse(12, 23));
     }
 
     private int gcd(int a, int b){
@@ -46,8 +47,34 @@ public class Tools {
         return d;
     }
 
-    private int reverse(int a, int b){
-        throw new UnsupportedOperationException("to do finding reverse element");
+    private int reverse(int a, int b) throws Exception {
+        List<Integer> q = new ArrayList<>();
+        int r1 = b;
+        int r2 = a;
+        int r3 = 1;
+
+        while (r3 != 0) {
+            q.add(r1 / r2);
+            r3 = r1 % r2;
+            r1 = r2;
+            r2 = r3;
+        }
+        if (r1 != 1) {
+            throw new Exception("gcd of " + a + " and " + b + " is not 1");
+        }
+        q.remove(q.size() - 1);
+        List<Integer> u = new ArrayList<>(Arrays.asList(1, 0));
+        List<Integer> v = new ArrayList<>(Arrays.asList(0, 1));
+        for (Integer integer : q) {
+            u.add(u.get(u.size() - 2) - u.get(u.size() - 1) * integer);
+            v.add(v.get(v.size() - 2) - v.get(v.size() - 1) * integer);
+        }
+
+        if (v.get(v.size() - 1) >= 0){
+            return v.get(v.size() - 1);
+        }else{
+            return v.get(v.size() - 1) + b;
+        }
     }
 
     private int[] solveLinearComparisons(int[] a){
