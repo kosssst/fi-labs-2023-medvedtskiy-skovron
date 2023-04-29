@@ -4,20 +4,29 @@ import java.util.*;
 public class Tools {
 
     private static final String ALPHABET = "абвгдежзийклмнопрстуфхцчшщъыьэюя";
+//    private static final String ALPHABET = "абвггдеєжзиіїйклмнопрстуфхцчшщьюя";
     private static final String FILE_PATH = "cp_3/medvedtskyi-fi-04-skovron-fi-04-cp3/src/to_decode.txt";
+    private final List<String> BiGrams = new ArrayList<>(Arrays.asList("то", "ст", "на", "ов", "ал"));
 
     public void run() throws Exception {
-//        System.out.println(calculateBigrams(getText(FILE_PATH)));
-//        System.out.println(gcd(23, 12));
-//        System.out.println(gcd(24, 12));
-//        System.out.println(gcd(20, 12));
-//        System.out.println(gcd(21, 12));
-//        System.out.println(gcd(25, 12));
-//        System.out.println(gcd(30, 12));
-//        System.out.println(reverse(12, 23));
+        String text = getText(FILE_PATH);
+        List<String> mostPopularBiGrams = getFirst5Elements(calculateBigrams(text));
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                try {
+                    String key = findKey(mostPopularBiGrams.get(i), BiGrams.get(j));
+                    System.out.println("\nKey:\n" + key + "\nText:\n" + decrypt(text, key));
+                } catch (Exception e) {
+//                    System.out.println("exception in " + BiGrams.get(j) + " -> " + mostPopularBiGrams.get(i));
+//                    System.out.println(e);
+                }
+            }
+        }
+//        String key = findKey("нк", "ов");
+//        String d = decrypt(text, key);
     }
 
-    private int gcd(int a, int b){
+    private int gcd(int a, int b) {
         int d = 1;
 
         while ((a % 2 == 0) && (b % 2 == 0)) {
@@ -77,12 +86,7 @@ public class Tools {
         }
     }
 
-    private int solveLinearComparisons(int[] a) throws Exception {
-        if (gcd(a[1], a[3]) != 1) throw new Exception("gcd is not 1");
-        return (a[0] * a[3] * reverse(a[3], a[1]) + a[2] * a[1] * reverse(a[1], a[3])) % (a[1] * a[3]);
-    }
-
-    private Map<String, Integer> calculateBigrams(String text){
+    private Map<String, Integer> calculateBigrams(String text) {
         Map<String, Integer> bigram = new TreeMap<>();
 
         for (int i = 0; i < text.length() - 1; i += 2) {
@@ -127,7 +131,54 @@ public class Tools {
         return temp;
     }
 
-    private String decodeText(String text, String key){
-        throw new UnsupportedOperationException("to do text decoding");
+    private String findKey(String biGramInEncryptedText, String biGramFromLanguage) throws Exception {
+        int y = (ALPHABET.indexOf(biGramInEncryptedText.charAt(0)) - ALPHABET.indexOf(biGramInEncryptedText.charAt(1)) + ALPHABET.length()) % ALPHABET.length();
+        int x = (ALPHABET.indexOf(biGramFromLanguage.charAt(0)) - ALPHABET.indexOf(biGramFromLanguage.charAt(1)) + ALPHABET.length()) % ALPHABET.length();
+            if (gcd(x, ALPHABET.length()) != 1) {
+            if (y % gcd(x, ALPHABET.length()) == 0) {
+                int d = gcd(x, ALPHABET.length());
+                x /= d;
+                y /= d;
+            } else {
+                throw new Exception("Has no solutions");
+            }
+        }
+        int a = (y * reverse(x, ALPHABET.length())) % ALPHABET.length();
+        int b = (ALPHABET.indexOf(biGramInEncryptedText.charAt(0)) - (a * ALPHABET.indexOf(biGramFromLanguage.charAt(0))) + (a * ALPHABET.length())) % ALPHABET.length();
+        return ("" + ALPHABET.charAt(a) + ALPHABET.charAt(b));
+    }
+
+    private int findSolution(int a, int b) throws Exception {
+        if (gcd(a, ALPHABET.length()) != 1) {
+            if (b % gcd(a, ALPHABET.length()) == 0) {
+                int d = gcd(a, ALPHABET.length());
+                a /= d;
+                b /= d;
+            } else {
+                throw new Exception("Has no solutions");
+            }
+        }
+        return (b * reverse(a, ALPHABET.length())) % ALPHABET.length();
+    }
+
+    private String decrypt(String text, String key) throws Exception {
+        int a = ALPHABET.indexOf(key.charAt(0));
+        int b = ALPHABET.indexOf((key.charAt(1)));
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            builder.append(ALPHABET.charAt(findSolution(a, (ALPHABET.indexOf(text.charAt(i)) - b + ALPHABET.length()) % ALPHABET.length())));
+        }
+        return builder.toString();
+    }
+
+    private List<String> getFirst5Elements(Map<String, Integer> map) {
+        int numOfMaps = 0;
+        List<String> bigrams = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            if (numOfMaps == 5) break;
+            bigrams.add(entry.getKey());
+            numOfMaps++;
+        }
+        return bigrams;
     }
 }
