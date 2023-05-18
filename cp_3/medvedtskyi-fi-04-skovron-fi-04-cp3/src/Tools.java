@@ -6,7 +6,7 @@ public class Tools {
     private static final String ALPHABET = "абвгдежзийклмнопрстуфхцчшщыьэюя";
     private static final String FILE_PATH = "cp_3/medvedtskyi-fi-04-skovron-fi-04-cp3/src/to_decode.txt";
     private final List<String> MostFrequencyBiGrams = new ArrayList<>(Arrays.asList("то", "ст", "на", "но", "ен"));
-    private List<String> BiGrams = new ArrayList<>();
+    private final List<String> BiGrams = new ArrayList<>();
     private static final double[] lettersFrequency = new double[]{0.0792, 0.0171, 0.0433, 0.0174, 0.0305, 0.0841, 0.0105, 0.0175, 0.0683, 0.0112, 0.0336, 0.0500, 0.0326, 0.0672, 0.1108, 0.0281, 0.0445, 0.0533, 0.0618, 0.0280, 0.0019, 0.0089, 0.0036, 0.0147, 0.0081, 0.0037, 0.0002, 0.0194, 0.0038, 0.0061, 0.0213};
     private double I = 0;
     private static final int M = ALPHABET.length() * ALPHABET.length();
@@ -208,42 +208,5 @@ public class Tools {
             sum += (double) (letters.get(ALPHABET.charAt(i)) * (letters.get(ALPHABET.charAt(i)) - 1)) / (text.length() * (text.length() - 1));
         }
         return sum;
-    }
-
-    private List<Character> getFirstNCharacters(Map<Character, Integer> map, int n) {
-        int numOfMaps = 0;
-        List<Character> bigrams = new ArrayList<>();
-        for (Map.Entry<Character, Integer> entry : map.entrySet()) {
-            if (numOfMaps == n) break;
-            bigrams.add(entry.getKey());
-            numOfMaps++;
-        }
-        return bigrams;
-    }
-
-    private List<Character> getLastNCharacters(Map<Character, Integer> map, int n) {
-        int numOfMaps = map.size();
-        List<Character> bigrams = new ArrayList<>();
-        for (Map.Entry<Character, Integer> entry : map.entrySet()) {
-            if (numOfMaps > n) continue;
-            bigrams.add(entry.getKey());
-            numOfMaps--;
-        }
-        return bigrams;
-    }
-
-    private double rate(String text) {
-        Map<Character, Integer> letters = calcLetters(text);
-        int k = 4;
-        double rating = 0;
-        List<Character> firstNSym = getFirstNCharacters(letters, k), lastNSym = getLastNCharacters(letters, k);
-        if (firstNSym.contains('о')) rating += 1;
-        if (firstNSym.contains('а')) rating += 1;
-        if (firstNSym.contains('е')) rating += 1;
-        if (lastNSym.contains('ф')) rating += 1;
-        if (lastNSym.contains('ц')) rating += 1;
-        if (lastNSym.contains('щ')) rating += 1;
-        rating -= Math.abs(getIndex(text) - I) * 200;
-        return rating;
     }
 }
