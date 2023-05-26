@@ -1,15 +1,15 @@
 import java.util.ArrayList;
 
 public class LZR {
-    private final ArrayList<Byte> Registry;
+    private String Registry;
     private final ArrayList<Integer> Reccurent;
 
-    public LZR(ArrayList<Byte> Registry, ArrayList<Integer> Reccurent) {
+    public LZR(String Registry, ArrayList<Integer> Reccurent) {
         this.Registry = Registry;
         this.Reccurent = Reccurent;
     }
 
-    public ArrayList<Byte> getRegistry() {
+    public String getRegistry() {
         return Registry;
     }
 
@@ -17,14 +17,14 @@ public class LZR {
         return Reccurent;
     }
 
-    public Byte generate() {
-        byte result = Registry.get(0);
+    public char generate() {
+        int result = (int) Registry.charAt(0);
         byte temp = 0;
         for (int i : Reccurent) {
-            temp ^= Registry.get(i);
+            temp ^= (int) Registry.charAt(i);
         }
-        Registry.remove(0);
-        Registry.add(temp);
-        return result;
+        Registry = Registry.substring(1);
+        Registry += temp;
+        return (char) result;
     }
 }
