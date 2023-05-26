@@ -16,4 +16,15 @@ public class LZR {
     public ArrayList<Integer> getReccurent() {
         return Reccurent;
     }
+
+    public Byte generate() {
+        byte result = Registry.get(0);
+        byte temp = 0;
+        for (int i : Reccurent) {
+            temp ^= Registry.get(i);
+        }
+        Registry.remove(0);
+        Registry.add(temp);
+        return result;
+    }
 }
