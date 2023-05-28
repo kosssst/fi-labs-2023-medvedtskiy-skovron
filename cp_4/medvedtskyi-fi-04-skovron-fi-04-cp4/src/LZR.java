@@ -18,13 +18,13 @@ public class LZR {
     }
 
     public char generate() {
-        int result = (int) Registry.charAt(0);
-        byte temp = 0;
+        int result = Character.getNumericValue(Registry.charAt(0));
+        int temp = 0;
         for (int i : Reccurent) {
-            temp ^= (int) Registry.charAt(i);
+            temp ^= Character.getNumericValue(Registry.charAt(i));
         }
         Registry = Registry.substring(1);
-        Registry += temp;
-        return (char) result;
+        Registry += Integer.toString(temp);
+        return (char) (result + '0');
     }
 }
