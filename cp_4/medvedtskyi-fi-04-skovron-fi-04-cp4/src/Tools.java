@@ -40,22 +40,31 @@ public class Tools {
         double tBetta1 = nd.inverseCumulativeProbability(1 - Betta1);
         double tBetta2 = nd.inverseCumulativeProbability(1 - Betta2);
 
-        int N1 = (int) Math.ceil(Math.pow((2 * tBetta1 + tAlpha * Math.sqrt(3)), 2));
-        int N2 = (int) Math.ceil(Math.pow((2 * tBetta2 + tAlpha * Math.sqrt(3)), 2));
+        //int N1 = (int) Math.ceil(Math.pow((2 * tBetta1 + tAlpha * Math.sqrt(3)), 2));
+        //int N2 = (int) Math.ceil(Math.pow((2 * tBetta2 + tAlpha * Math.sqrt(3)), 2));
 
-        int C1 = (int) Math.ceil((N1 + tAlpha * Math.sqrt(3 * N1)) / 4);
-        int C2 = (int) Math.ceil((N2 + tAlpha * Math.sqrt(3 * N2)) / 4);
+        int N1 = 222;
+        int N2 = 229;
+        int C1 = 71;
+        int C2 = 73;
 
-        L1Candidates = Candidates("L1", L1Reccurent, N1, C1, L1Length, 16);
-        L2Candidates = Candidates("L2", L2Reccurent, N2, C2, L2Length, 16);
+        //int C1 = (int) Math.ceil((N1 + tAlpha * Math.sqrt(3 * N1)) / 4);
+        //int C2 = (int) Math.ceil((N2 + tAlpha * Math.sqrt(3 * N2)) / 4);
+
+//        L1Candidates = Candidates("L1", L1Reccurent, N1, C1, L1Length, 16);
+//        L2Candidates = Candidates("L2", L2Reccurent, N2, C2, L2Length, 16);
         // or you can use already generated candidates:
-//        L1Candidates = getLFromFile("cp_4/medvedtskyi-fi-04-skovron-fi-04-cp4/src/L1_candidates.txt");
-//        L2Candidates = getLFromFile("cp_4/medvedtskyi-fi-04-skovron-fi-04-cp4/src/L2_candidates.txt");
+        L1Candidates = getLFromFile("cp_4/medvedtskyi-fi-04-skovron-fi-04-cp4/src/L1_candidates.txt");
+        L2Candidates = getLFromFile("cp_4/medvedtskyi-fi-04-skovron-fi-04-cp4/src/L2_candidates.txt");
 
         System.out.println(findL3(L1Candidates, L2Candidates));
 //        System.out.println(L3Thread(L1Candidates, L2Candidates, 0, (int) Math.pow(2, L3Length)));
 
 
+    }
+
+    private int Geffe(int x, int y, int s) {
+        return (s & x) ^ ((1 ^ s) & y);
     }
 
     private TreeSet<ArrayList<String>> findL3(TreeSet<String> L1Candidates, TreeSet<String> L2Candidates) {
@@ -89,6 +98,7 @@ public class Tools {
         for (var future : futures) {
             try {
                 if (future.get().contains("")) continue;
+                System.out.println(future.get());
                 res.add(future.get());
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -115,17 +125,17 @@ public class Tools {
     }
 
     private ArrayList<String> checkL3(String L3Candidate, TreeSet<String> L1Candidates, TreeSet<String> L2Candidates) {
-        LZR L3 = new LZR(L3Candidate, L3Reccurent);
         for (var l1Candidate : L1Candidates) {
-            LZR L1 = new LZR(l1Candidate, L1Reccurent);
             for (var l2Candidate : L2Candidates) {
+                LZR L1 = new LZR(l1Candidate, L1Reccurent);
                 LZR L2 = new LZR(l2Candidate, L2Reccurent);
-                Geffe gen = new Geffe(L1, L2, L3);
+                LZR L3 = new LZR(L3Candidate, L3Reccurent);
                 for (int i = 0; i < Sequence.length(); i++) {
                     int z = Character.getNumericValue(Sequence.charAt(i));
-                    int zi = gen.next();
+                    int zi = Geffe(Character.getNumericValue(L1.generate()), Character.getNumericValue(L2.generate()), Character.getNumericValue(L3.generate()));
                     if (z == zi) {
                         if (i == Sequence.length() - 1) {
+                            System.out.println(l1Candidate + " " + l2Candidate + " " + L3Candidate);
                             return new ArrayList<>(List.of(l1Candidate, l2Candidate, L3Candidate));
                         }
                     } else {
